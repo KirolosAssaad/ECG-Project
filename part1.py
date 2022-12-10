@@ -1,17 +1,10 @@
-import matplotlib.pyplot as plt
 from header import plot_intervals, plot_after_moving_average, r_wave_detector
 
-samplingRate = 256
 N = 15
 
-
-
 if __name__ == '__main__':
-
     plot_after_moving_average('DataN.txt', N)
     plot_intervals('DataN.txt', N)
-
     peaks, diff = r_wave_detector('DataN.txt', N)
     print("Peaks: ", peaks)
-
     print("\n\nRR intervals: ", diff)
