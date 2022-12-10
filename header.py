@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-samplingRate = 256
-N = 15
-
 
 def read_file(fileName):
 
@@ -65,7 +62,7 @@ def plot_signal(data, sampling_rate):
     # show the plot
     plt.show()
 
-# read the file
+# # read the file
 
 
 def notch_filter(data, sampling_rate, freq, Q):
@@ -153,3 +150,103 @@ def get_peaks(data, threshold, window_size=150):
         max_peak = np.argmax(data[start:end]) + start
         max_peaks.append(max_peak)
     return max_peaks
+
+
+# r wave detector function  (function wrapper)
+
+def r_wave_detector(input_file, N):
+    samplingRate = 256
+
+    # read the file
+    data = read_file(input_file)
+
+    # notch filter
+    notch_filtered = notch_filter(data, samplingRate, 50, 30)
+
+    # bandpass filter
+    bandpass_filtered = bandpass_filter(notch_filtered, samplingRate, 1, 50)
+
+    # differentiate
+    derivative = differentiate(bandpass_filtered, samplingRate)
+
+    # square
+    squared = square(derivative)
+
+    # moving average
+    moving_averaged = moving_average(squared, N)
+
+    # get threshold
+    threshold = get_threshold(moving_averaged)
+
+    # get peaks
+    peaks = get_peaks(moving_averaged, threshold)
+
+    peaks = np.array(peaks)
+
+    # remove repeated peaks
+    peaks = np.unique(peaks)
+
+    diff = np.diff(peaks/samplingRate)
+    # remove zeros
+    diff = diff[diff != 0]
+
+    # return peaks
+    return peaks, diff
+
+
+def plot_after_moving_average(input_file, N, no_samples=0):
+    samplingRate = 256
+    # read the file
+    data = read_file(input_file)
+
+    # check if no_samples is given
+    if no_samples != 0:
+        data = data[:no_samples]
+    else:
+        pass
+    
+
+    notch_filtered = notch_filter(data, samplingRate, 50, 30)
+
+    bandpass_filtered = bandpass_filter(notch_filtered, samplingRate, 1, 50)
+
+    derivative = differentiate(bandpass_filtered, samplingRate)
+
+    squared = square(derivative)
+
+    moving_averaged = moving_average(squared, N)
+    # plot_signal(moving_averaged, samplingRate)
+
+    # get threshold
+    threshold = get_threshold(moving_averaged)
+
+    # get peaks
+    peaks = get_peaks(moving_averaged, threshold)
+
+    # create a list of time values
+    time = [i/samplingRate for i in range(len(moving_averaged))]
+
+    # plot the signal
+    plt.plot(time, moving_averaged)
+
+    # plot the threshold
+    plt.plot(time, [threshold for i in range(len(moving_averaged))])
+    # plot the peaks
+    plt.plot([time[i] for i in peaks], [moving_averaged[i]
+             for i in peaks], '*', color='red')
+
+    # label the axes
+    plt.xlabel('Time (s)')
+    plt.ylabel('Amplitude')
+
+    # show the plot
+    plt.show()
+
+def plot_intervals(input_file, N):
+    _peaks, diff = r_wave_detector(input_file, N)
+
+    # plot the intervals
+    plt.plot(diff)
+    plt.xlabel('RR Intervals')
+    plt.ylabel('Interval (s)')
+    plt.show()
