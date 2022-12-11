@@ -257,9 +257,9 @@ def get_missing_peaks(fileName, N):
 
     # get index of peaks above threshold
     above_threshold = np.where(diff > threshold)[0]
-    missing_peaks_time = np.array([], dtype=float)
 
     threshold = threshold/1000
+    ppeaks = []
 
     for i in above_threshold:
         peak_before_time = peaks_timestamp[i]
@@ -269,10 +269,8 @@ def get_missing_peaks(fileName, N):
 
         for j in range(num_peaks):
             if np.absolute(peak_before_time + threshold*(j+1) - peak_after_time) >= 0.5 * threshold:
-                missing_peaks_time = np.append(
-                    missing_peaks_time, peak_before_time + threshold*(j+1))
-
-    return missing_peaks_time
+                ppeaks.append(peak_before_time + threshold*(j+1))
+    return ppeaks
 
 
 def plot_signal(data, sampling_rate, title, output_file=None):
@@ -298,9 +296,14 @@ def part_1_a():
     data = data[0:1500]
     plot_signal(data, 256, "Signal After Filtering",
                 "./part1_results/before_filtering.png")
+    
+    notched = notch_filter(data, 256, 50, 30)
+    bandpass = bandpass_filter(notched, 256, 1, 50)
+    plot_signal(bandpass, 256, "Signal After Filtering",
+                "./part1_results/after_filtering.png")
 
-    plot_after_moving_average('DataN.txt', N, False, 1500, 0,
-                              "Signal After Filtering", "./part1_results/after_filtering.png")
+    # plot_after_moving_average('DataN.txt', N, False, 1500, 0,
+                            #   "Signal After Filtering", "./part1_results/after_filtering.png")
 
 
 def part_1_b():
@@ -344,3 +347,10 @@ def part_1_d():
     peaks, diff = r_wave_detector('DataN.txt', N, 1500, 0)
     np.savetxt("./part1_results/n_25/peaks_values.txt", peaks, fmt='%d')
     np.savetxt("./part1_results/n_25/intervals_values.txt", diff, fmt='%d')
+
+def part2():
+    N = 25
+    missing_peaks = get_missing_peaks('Data2.txt', N)
+    plot_after_moving_average('Data2.txt', N, True, 7500, 0,
+                                "Peaks on Moving Average Filter", "./part2_results/peaks_moving_avg.png")
+    np.savetxt("./part2_results/missing_peaks.txt", missing_peaks, fmt='%f')
