@@ -312,8 +312,8 @@ def part_1_b():
                "./part1_results/n_10/peaks_raw_data.png")
     plot_after_moving_average('DataN.txt', N, True, 1500, 0,
                               "Peaks on Moving Average Filter", "./part1_results/n_10/peaks_moving_avg.png")
-    plot_intervals('DataN.txt', N, 1500, 0,
-                   "./part1_results/n_10/intervals.png")
+    plot_intervals('DataN.txt', N, start=0,
+                   output_file="./part1_results/n_10/intervals.png")
 
     peaks, diff = r_wave_detector('DataN.txt', N, 1500, 0)
     np.savetxt("./part1_results/n_10/peaks_values.txt", peaks, fmt='%d')
@@ -326,8 +326,8 @@ def part_1_c():
                "./part1_results/n_15/peaks_raw_data.png")
     plot_after_moving_average('DataN.txt', N, True, 1500, 0,
                               "Peaks on Moving Average Filter", "./part1_results/n_15/peaks_moving_avg.png")
-    plot_intervals('DataN.txt', N, 1500, 0,
-                   "./part1_results/n_15/intervals.png")
+    plot_intervals('DataN.txt', N, start=0,
+                   output_file="./part1_results/n_15/intervals.png")
 
     peaks, diff = r_wave_detector('DataN.txt', N, 1500, 0)
     np.savetxt("./part1_results/n_15/peaks_values.txt", peaks, fmt='%d')
@@ -341,8 +341,8 @@ def part_1_d():
                "./part1_results/n_25/peaks_raw_data.png")
     plot_after_moving_average('DataN.txt', N, True, 1500, 0,
                               "Peaks on Moving Average Filter", "./part1_results/n_25/peaks_moving_avg.png")
-    plot_intervals('DataN.txt', N, 1500, 0,
-                   "./part1_results/n_25/intervals.png")
+    plot_intervals('DataN.txt', N, start=0,
+                   output_file="./part1_results/n_25/intervals.png")
 
     peaks, diff = r_wave_detector('DataN.txt', N, 1500, 0)
     np.savetxt("./part1_results/n_25/peaks_values.txt", peaks, fmt='%d')
